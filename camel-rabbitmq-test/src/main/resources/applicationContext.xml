@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
+    ">
+
+	<!-- To create and grant user cameltest: rabbitmqctl add_user cameltest 
+		cameltest rabbitmqctl set_permissions -p / cameltest ".*" ".*" ".*" -->
+
+	<bean id="customConnectionFactory" class="com.rabbitmq.client.ConnectionFactory">
+		<property name="host" value="localhost" />
+		<property name="port" value="5672" />
+		<property name="username" value="guest" />
+		<property name="password" value="guest" />
+	</bean>
+
+	<bean id="testBean" class="test.TestBean" />
+
+	<camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
+		<route>
+			<!-- <from uri="direct:rabbitMQ"/> -->
+			<from
+				uri="rabbitmq://localhost:5672/ex2?connectionFactory=#customConnectionFactory&amp;queue=q2&amp;routingKey=q2" />
+			<!-- <to uri="bean:testBean?method=hello" /> -->
+			<to uri="direct:rabbitMQ"/>
+			<to
+				uri="rabbitmq://localhost:5672/ex1?connectionFactory=#customConnectionFactory&amp;queue=q1&amp;routingKey=q1" />
+		</route>
+		<route>
+			<from uri="direct:rabbitMQ"/>
+			<to
+				uri="rabbitmq://localhost:5672/ex1?connectionFactory=#customConnectionFactory"/>
+		</route>
+	</camelContext>
+
+</beans>
+
+
+
+<!-- <?xml version="1.0" encoding="UTF-8"?> <camel> <camelContext> <route> 
+	<from uri="direct:rabbitMQEx2" /> <to uri="rabbitmq://localhost:5672/ex2?connectionFactory=#customConnectionFactory" 
+	/> </route> </camelContext> </camel> -->
