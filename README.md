@@ -1,2 +1,2 @@
 # camelrabbitmq
-This is a test project for RabbitMQ test using Java and Camel Rabbit MQ 
+This is a test project for RabbitMQ functionality using Java Maven and Camel
